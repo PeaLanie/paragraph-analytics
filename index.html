@@ -7,14 +7,14 @@
     <title>Paragraph Analytics</title>
     <link rel="stylesheet" href="main.css">
 </head>
-<body>
+<body id="body">
     <div class="wrapper">
         <h1>Paragraph Analytics</h1>
         <div class="input_area">
-            <input type="text" id="user_input">
-            <span id="paste_btn" class="paste_btn">Paste</span>
+            <input type="text" id="user_input" placeholder="Paste your paragraph here to analyse...">
             <button type="submit" id="submit">Submit</button>
         </div>
+        
         <div class="container">
             <div id="paragraph">
                 
@@ -27,17 +27,32 @@
                     Characters: <span id="char_count" class="display_each">0</span>
                 </p>
                 <p>
-                    letters: <span id="letter_count" class="display_each">0</span>
+                    Letters: <span id="letter_count" class="display_each">0</span>
                 </p>
                 <p>
                     Symbols: <span id="symbol_count" class="display_each">0</span>
                 </p>
                 <p>
-                    Spaces: <span id="space_count" class="display_each">0</span>
+                    Digits: <span id="number_count" class="display_each">0</span>
                 </p>
             </div>
         </div>
+        <div class="search_bar">
+            <input type="text" id="search_words" placeholder="Search term...">
+            <button type="submit" id="search_btn">Search</button>
+        </div>
+        <div class="aboutTheParagraph">
+            <button id="aboutParagraph">About Paragraph</button>
+        </div>
+        <div class="blur_bg">
+            <div class="resultsBox">
+                <h3>Results</h3>
+                <p id="resultsPoint"></p>
+                <button id="resultsBtn">Ok</button>
+            </div>
+        </div>
     </div>
+    
 <script src="main.js"></script>
 </body>
 </html>
