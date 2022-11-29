@@ -12,4 +12,4 @@ Features:
 they will be highlighed in they posisition, so you can navigate to see the whole context around them.
 * And finally, at the bottom, there is the "About Paragraph" button, which will tell you in advance about the paragraph if you have not read it yet.
 
-Navigate to the <a href="#">GitHub Pages</a> to check it out.
+Navigate to the <a href="https://pealanie.github.io/paragraph-analytics/">GitHub Pages</a> to check it out.
