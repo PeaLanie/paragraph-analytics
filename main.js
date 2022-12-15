@@ -24,10 +24,33 @@ window.addEventListener('DOMContentLoaded', () => {
     submit.addEventListener('click', () => {
         
         sentence = user_input.value
-        sentenceWithoutPunctuations = sentence.replace(regex, '')
-        sentenceWithoutPunctuations = sentenceWithoutPunctuations.replace(/(\r\n|\n|\r)/gm, '')
         
         if (sentence != false) {
+            sentenceWithoutPunctuations = sentence.replace(regex, '')
+            sentenceWithoutPunctuations = sentenceWithoutPunctuations.replace(/(\r\n|\n|\r)/gm, '')
+            let symbols = sentence.replaceAll(/\w/g, '')
+            symbols = symbols.replaceAll(' ', '')
+        
+            const digits = sentence.replace(/[^\d]/g, '')
+        
+            words = []
+
+            wordsList = sentenceWithoutPunctuations.split(' ')
+            wordsList.forEach(word => {
+                if (word === '') {
+                    return
+                } else {
+                    words.push(word.toLowerCase())
+                }
+            })
+            paragraph.textContent = sentence
+            parrent.appendChild(paragraph)
+            word_count.textContent = words.length
+            char_count.textContent = sentence.replaceAll(' ', '').length
+            letter_count_el.textContent = sentenceWithoutPunctuations.replaceAll(' ', '').length
+            symbol_count_el.textContent = symbols.length
+            number_count_el.textContent = digits.length
+            user_input.value = ''
             searchBar.style.display = 'block'
             container.style.display = 'block'
         } else {
@@ -37,30 +60,6 @@ window.addEventListener('DOMContentLoaded', () => {
             searchBar.style.display = 'none'
             container.style.display = 'none'
         }
-        
-        let symbols = sentence.replaceAll(/\w/g, '')
-        symbols = symbols.replaceAll(' ', '')
-        
-        const digits = sentence.replace(/[^\d]/g, '')
-        
-        words = []
-
-        wordsList = sentenceWithoutPunctuations.split(' ')
-        wordsList.forEach(word => {
-            if (word === '') {
-                return
-            } else {
-                words.push(word.toLowerCase())
-            }
-        })
-        paragraph.textContent = sentence
-        parrent.appendChild(paragraph)
-        word_count.textContent = words.length
-        char_count.textContent = sentence.replaceAll(' ', '').length
-        letter_count_el.textContent = sentenceWithoutPunctuations.replaceAll(' ', '').length
-        symbol_count_el.textContent = symbols.length
-        number_count_el.textContent = digits.length
-        user_input.value = ''
     })
 
     // ============= THE ABOUT PARAGRAPH BOTTON FUNCTION ==============
