@@ -6,53 +6,63 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Paragraph Analytics</title>
     <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body id="body">
     <div class="wrapper">
-        <h1>Paragraph Analytics</h1>
-        <div class="input_area">
-            <input type="text" id="user_input" placeholder="Paste your paragraph here to analyse...">
-            <button type="submit" id="submit">Submit</button>
-        </div>
-        
-        <div class="container">
-            <div id="paragraph">
-                
+        <div class="header">
+            <div>
+                <h1>Paragraph Analytics</h1>
+                <div class="socials">
+                    <a href="https://github.com/PeaLanie" target="_blank" title="https://github.com/PeaLanie"><i class="fa-brands fa-github"></i></a>
+                    <a href="mailto:pealanie.sodium@gmail.com" title="pealanie.sodium@gmail.com"><i class="fa-solid fa-envelope"></i></a>
+                    <i class="fa-solid fa-phone" title="+27 78 311 3027"></i>
+                </div>
             </div>
-            <div class="displays">
-                <p>
-                    Words: <span id="word_count" class="display_each">0</span>
-                </p>
-                <p>
-                    Characters: <span id="char_count" class="display_each">0</span>
-                </p>
-                <p>
-                    Letters: <span id="letter_count" class="display_each">0</span>
-                </p>
-                <p>
-                    Symbols: <span id="symbol_count" class="display_each">0</span>
-                </p>
-                <p>
-                    Digits: <span id="number_count" class="display_each">0</span>
-                </p>
+            <div class="input_area">
+                <input type="text" id="user_input" placeholder="Paste your paragraph here...">
+                <button type="submit" id="submit">Submit</button>
             </div>
         </div>
-        <div class="search_bar">
-            <input type="text" id="search_words" placeholder="Search term...">
-            <button type="submit" id="search_btn">Search</button>
-        </div>
-        <div class="aboutTheParagraph">
-            <button id="aboutParagraph">About Paragraph</button>
-        </div>
-        <div class="blur_bg">
-            <div class="resultsBox">
-                <h3>Results</h3>
-                <p id="resultsPoint"></p>
-                <button id="resultsBtn">Ok</button>
+        <div>
+            <div class="container">
+                <div id="paragraph">
+                    
+                </div>
+                <div class="displays">
+                    <p>
+                        Words: <span id="word_count" class="display_each">0</span>
+                    </p>
+                    <p>
+                        Characters: <span id="char_count" class="display_each">0</span>
+                    </p>
+                    <p>
+                        Letters: <span id="letter_count" class="display_each">0</span>
+                    </p>
+                    <p>
+                        Symbols: <span id="symbol_count" class="display_each">0</span>
+                    </p>
+                    <p>
+                        Digits: <span id="number_count" class="display_each">0</span>
+                    </p>
+                    <div class="aboutTheParagraph">
+                        <button id="aboutParagraph">About Paragraph</button>
+                    </div>
+                </div>
+            </div>
+            <div class="search_bar">
+                <input type="text" id="search_words" placeholder="Search term...">
+                <button type="submit" id="search_btn">Search</button>
             </div>
         </div>
     </div>
-    
+    <div class="blur_bg">
+        <div class="resultsBox">
+            <h3>Results</h3>
+            <p id="resultsPoint"></p>
+            <button id="resultsBtn">Ok</button>
+        </div>
+    </div>
 <script src="main.js"></script>
 </body>
 </html>

@@ -6,29 +6,36 @@ window.addEventListener('DOMContentLoaded', () => {
     const letter_count_el = document.querySelector('#letter_count')
     const symbol_count_el = document.querySelector('#symbol_count')
     const parrent = document.querySelector('#paragraph')
-    const space_count_el = document.querySelector('#space_count')
     const number_count_el = document.querySelector('#number_count')
     const paragraph = document.createElement('p')
     const search_words = document.querySelector('#search_words')
     const search_btn = document.querySelector('#search_btn')
-    const body = document.querySelector('#body')
     const searchBar = document.querySelector('.search_bar')
     searchBar.style.display = 'none'
+    const aboutParagraph = document.querySelector('#aboutParagraph')
+    aboutParagraph.style.display = 'none'
+    const container = document.querySelector('.container')
+    container.style.display = 'none'
     let sentenceWithoutPunctuations
-
     let punctuation = '–⁠!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~0-9'
     let regex = new RegExp('[' + punctuation + ']', 'g')
-
     let words = []
     let sentence
-    //let sentence = user_input.value
+
     submit.addEventListener('click', () => {
         
         sentence = user_input.value
         sentenceWithoutPunctuations = sentence.replace(regex, '')
+        sentenceWithoutPunctuations = sentenceWithoutPunctuations.replace(/(\r\n|\n|\r)/gm, '')
         
         if (sentence != false) {
             searchBar.style.display = 'block'
+            aboutParagraph.style.display = 'block'
+            container.style.display = 'block'
+        } else {
+            resultsPoint.textContent = 'Type or paste a paragraph to work with.'
+            blur_bg.style.visibility = 'visible'
+            resultsBox.classList.add('resultsBoxVisible')
         }
         
         let symbols = sentence.replaceAll(/\w/g, '')
@@ -46,23 +53,38 @@ window.addEventListener('DOMContentLoaded', () => {
                 words.push(word.toLowerCase())
             }
         })
-        
         paragraph.textContent = sentence
-
         parrent.appendChild(paragraph)
-
         word_count.textContent = words.length
         char_count.textContent = sentence.replaceAll(' ', '').length
         letter_count_el.textContent = sentenceWithoutPunctuations.replaceAll(' ', '').length
         symbol_count_el.textContent = symbols.length
         number_count_el.textContent = digits.length
-
         user_input.value = ''
-        
     })
+
     // ============= THE ABOUT PARAGRAPH BOTTON FUNCTION ==============
-    const aboutParagraph = document.querySelector('#aboutParagraph')
     aboutParagraph.addEventListener('click', () => {
+        
+        function filterPopularWord(term) {
+            if (term.length < 5) {
+                occurrenceList = []
+                delete sameWordsCount[term]
+    
+                let indexOfPopularTerm = eachWord.indexOf(term)
+                eachWord.splice(indexOfPopularTerm, 1)
+                eachWord.forEach((key) => {
+                    let countOfEachKey = sameWordsCount[key]
+                    occurrenceList.push(countOfEachKey)
+                })
+                max = Math.max.apply(null, occurrenceList)
+                
+                term = getKeyByValue(sameWordsCount, max)
+                return filterPopularWord(term)
+            } else {
+                return term
+            }
+        }
         let sameWords = []
         let sortedWords = words.sort()
         for (let i = 0; i < sortedWords.length; i++) {
@@ -87,66 +109,43 @@ window.addEventListener('DOMContentLoaded', () => {
         function getKeyByValue(object, value) {
             return Object.keys(object).find(key => object[key] === value);
           }
-
         let occurrenceList = []
-
         eachWord.forEach((key) => {
             let countOfEachKey = sameWordsCount[key]
             occurrenceList.push(countOfEachKey)
         })
-        
-        let max = Math.max.apply(null, occurrenceList)
-        let popularTerm = getKeyByValue(sameWordsCount, max)
-
-        
-
-        function filterPopularWord(popularTerm) {
-            if (popularTerm.length < 5) {
-                occurrenceList = []
-                delete sameWordsCount[popularTerm]
-    
-                let indexOfPopularTerm = eachWord.indexOf(popularTerm)
-                eachWord.splice(indexOfPopularTerm, 1)
-                eachWord.forEach((key) => {
-                    let countOfEachKey = sameWordsCount[key]
-                    occurrenceList.push(countOfEachKey)
-                })
-                max = Math.max.apply(null, occurrenceList)
-                
-                popularTerm = getKeyByValue(sameWordsCount, max)
-                return filterPopularWord(popularTerm)
-            } else {
-                return popularTerm
-            }
-        }
-
-
-        let results = filterPopularWord(popularTerm)
         
         if (words.length <= 100) {
             resultsPoint.textContent = `The paragraph is too short for the algorithm.`
             blur_bg.style.visibility = 'visible'
             resultsBox.classList.add('resultsBoxVisible')
         } else {
-            resultsPoint.textContent = `The writer talks alot about "${results}". So, this paragraph may be about ${results} or is related to ${results}`
-            blur_bg.style.visibility = 'visible'
-            resultsBox.classList.add('resultsBoxVisible')
-        }
+            if (sameWords.length === 0) {
+                resultsPoint.textContent = `The algorithm is not too sure what the paragraph is about.`
+                blur_bg.style.visibility = 'visible'
+                resultsBox.classList.add('resultsBoxVisible')
+            } else {
+                let max = Math.max.apply(null, occurrenceList)
+                let popularTerm = getKeyByValue(sameWordsCount, max)
+                let results = filterPopularWord(popularTerm)
 
+                resultsPoint.textContent = `The writer talks alot about "${results.toUpperCase()}". So, this paragraph may be about "${results.toUpperCase()}" or is related to "${results.toUpperCase()}"`
+                blur_bg.style.visibility = 'visible'
+                resultsBox.classList.add('resultsBoxVisible')
+            }
+        }
     })
 
-    // ============= END ===========================
+    // ============= THE END: ABOUT PARAGRAPH BUTTON FUNCTION =============
 
     const resultsBtn = document.querySelector('#resultsBtn')
     const resultsPoint = document.querySelector('#resultsPoint')
     const resultsBox = document.querySelector('.resultsBox')
     const blur_bg = document.querySelector('.blur_bg')
-    
+// ====================== SEARCH BTN EVENT LISTENER ======================
     search_btn.addEventListener('click', () => {
         let search_term = search_words.value.toLowerCase().trim()
-
         let word_count = 0
-
         function searchTerm(term) {
             if (words.includes(term)) {
                 words.forEach(word => {
@@ -154,67 +153,63 @@ window.addEventListener('DOMContentLoaded', () => {
                         word_count++
                     }
                 })
-                return  term + ' is mentioned ' + word_count + ' times.'
+                return  term.toUpperCase() + ' is mentioned ' + word_count + ' times.'
             } else {
-                return term + ' does not exist'
+                return term.toUpperCase() + ' does not exist'
             }
         }
+//=========== FUNCTION THAT HIGHLIGHTS THE SEARCH TERM ============
+        function searchWordHighlighter(string, target) {
+            string = string.replace(/(\r\n|\n|\r)/gm, '')
+            return string.split(' ').map((word) => {
+                if (word.toLowerCase() === target) {
+                  word = `<span style="color: blue; text-decoration: underline; font-size: .8rem">${target}</span>`
+                  return word.toUpperCase()
+                } else if (word.toLowerCase().includes(target)) {
+                    let firstChars = word.substring(0, word.toLowerCase().indexOf(target))
+                    let lastChars = word.substring(target.length + firstChars.length)
+                    let regExStart = /^[^a-z]/i
+                    let regExEnd = /[^a-z]$/i
+                    if (regExEnd.test(firstChars) || regExStart.test(lastChars)) {
+                        let newWord = `<span style="color: blue; text-decoration: underline; font-size: .8rem">${target}</span>`
+                        return firstChars + newWord.toUpperCase() + lastChars
+                    }
+                    return word
+                } else {
+                    return word
+                }
+            }).join(' ')
+        }
+// ===================== THE END =====================
+        
         let searchWordCount = searchTerm(search_term)
         
-        blur_bg.style.visibility = 'visible'
 
-// ================ RESULTS BOX CONDITION ==================
+// ================ RESULTS BOX POPUP CONDITION ==================
 
-        if (paragraph.textContent === '' && search_term === '' || paragraph.textContent === '' && search_term !== '') {
-            resultsPoint.textContent = 'Type or paste a paragraph to analyse.'
-            resultsBox.classList.add('resultsBoxVisible')
-        } else if (searchWordCount == `${searchTerm} does not exist` && search_term !== '') {
-            resultsPoint.textContent = 'Invalid or ' + '"' + search_term + '"' + ' is not available.'
+        if (searchWordCount == `${search_term} does not exist` && search_term !== '') {
+            resultsPoint.textContent = 'Invalid or ' + '"' + search_term.toUpperCase() + '"' + ' is not available.'
+            blur_bg.style.visibility = 'visible'
             resultsBox.classList.add('resultsBoxVisible')
         } else if (search_term === '') {
             resultsPoint.textContent = 'Please input search term'
+            blur_bg.style.visibility = 'visible'
             resultsBox.classList.add('resultsBoxVisible')
         } else {
             resultsPoint.textContent = searchWordCount
+            blur_bg.style.visibility = 'visible'
             resultsBox.classList.add('resultsBoxVisible')
         }
 
-// ================= THE END ============================
+// ================= THE END: RESULTS BOX POPUP CONDITION =================
 
-        search_words.value = ''
-
-//=========== FUNCTION THAT HIGHLIGHTS THE SEARCH TERM ============
-        
-        function searchWordHighlighter(string, target) {
-            return string.split(' ').map((word) => {
-                if (word.toLowerCase() === target) {
-                  word = `<span style="color: blue; text-decoration: underline">${target}</span>`
-                  return word
-                } else {
-                    if (word.toLowerCase().match(target) && word.indexOf(target) !== 0 && word.substring(0, word.indexOf(target)).match(/\W/g)) {
-                        let firstChars = word.substring(0, word.indexOf(target))
-                        let filteredArray = word.match(target)
-                        let newWord = `<span style="color: blue; text-decoration: underline">${filteredArray[0]}</span>`
-                        return firstChars + newWord
-                    } else if (word.toLowerCase().match(target) && word.indexOf(target) === 0 && word.substring(target.length).match(/\W/g)) {
-                        let lastChars = word.substring(target.length)
-                        let filteredArray = word.match(target)
-                        let newWord = `<span style="color: blue; text-decoration: underline">${filteredArray[0]}</span>`
-                        return newWord + lastChars
-                    } else {
-                        return word
-                    }
-                }
-              }).join(' ')
-        }
         paragraph.innerHTML = searchWordHighlighter(sentence, search_term)
+        search_words.value = ''
     })
-    // ===================== THE END =====================
-
+// ================= THE END: SEARCH BTN EVENT LISTENER ==================
+    
     resultsBtn.addEventListener('click', () => {
         resultsBox.classList.remove('resultsBoxVisible')
         blur_bg.style.visibility = 'hidden'
     })
 })
-
-//const symbole = [' ', '.', ',', '!', '"', "'", '#', '$', '%', '&', '(', ')', '*', '+', '-', '/', ':', ';', '<', '>', '=', '?', '@', '[', ']', '\\', '^', '_', '`', '{', '|', '}', '~']
