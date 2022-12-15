@@ -13,7 +13,6 @@ window.addEventListener('DOMContentLoaded', () => {
     const searchBar = document.querySelector('.search_bar')
     searchBar.style.display = 'none'
     const aboutParagraph = document.querySelector('#aboutParagraph')
-    aboutParagraph.style.display = 'none'
     const container = document.querySelector('.container')
     container.style.display = 'none'
     let sentenceWithoutPunctuations
@@ -30,12 +29,13 @@ window.addEventListener('DOMContentLoaded', () => {
         
         if (sentence != false) {
             searchBar.style.display = 'block'
-            aboutParagraph.style.display = 'block'
             container.style.display = 'block'
         } else {
             resultsPoint.textContent = 'Type or paste a paragraph to work with.'
             blur_bg.style.visibility = 'visible'
             resultsBox.classList.add('resultsBoxVisible')
+            searchBar.style.display = 'none'
+            container.style.display = 'none'
         }
         
         let symbols = sentence.replaceAll(/\w/g, '')
