@@ -60,9 +60,10 @@ window.addEventListener('DOMContentLoaded', () => {
     A realistic problem is that bitcoin operates without any central authority. Because of this, anyone making an error with a transaction on their wallet has no recourse. If you accidentally send bitcoins to the wrong person or lose your password there is nobody to turn to.
     
     Of course, the eventual arrival of practical quantum computing could break it all. Much cryptography relies on mathematical calculations that are extremely hard for current computers to do, but quantum computers work very differently and may be able to execute them in a fraction of a second.`
+
     
     submit.addEventListener('click', () => {
-        sentence = testString//user_input.value
+        sentence = user_input.value
         
         if (sentence != false) {
             sentenceWithoutPunctuations = sentence.replace(regex, '')
@@ -107,7 +108,6 @@ window.addEventListener('DOMContentLoaded', () => {
                     const targetEl = e.target;
                     let targetContent = targetEl.textContent;
                     targetContent = targetContent.replace(/\W/g, '')
-                    console.log(targetContent);
 
                     getDefination(targetContent.toLowerCase())
                         .then((data) => {
@@ -312,14 +312,78 @@ window.addEventListener('DOMContentLoaded', () => {
         paragraph.innerHTML = searchWordHighlighter(sentence, search_term);
 
         let modernWord = document.querySelectorAll('.modernWord');
-        
-        modernWord.forEach((word) => {
-            word.addEventListener('click', (e) => {
-                const targetEl = e.target;
-                const targetContent = targetEl.textContent;
-                console.log(targetContent)
+            modernWord.forEach((word) => {
+                word.addEventListener('click', (e) => {
+                    const targetEl = e.target;
+                    let targetContent = targetEl.textContent;
+                    targetContent = targetContent.replace(/\W/g, '')
+
+                    getDefination(targetContent.toLowerCase())
+                        .then((data) => {
+                            const dataList = data.list
+                            dataList.forEach((data) => {
+
+                                const addData = async (data) => {
+
+                                    definitionContainer.style.display = 'flex'
+
+                                    const dataEl = document.createElement('div');
+                                    dataEl.classList = 'variations';
+    
+                                    const h3 = document.createElement('h3');
+                                    h3.classList = 'word';
+                                    h3.textContent = '[Variation]: ' + data.word;
+    
+                                    const h4_definition = document.createElement('h4');
+                                    h4_definition.textContent = '[Definition]:';
+                                    
+                                    const p_definition = document.createElement('p');
+                                    p_definition.classList = 'definition';
+                                    p_definition.textContent = data.definition;
+    
+                                    const h4_examples = document.createElement('h4');
+                                    h4_examples.classList = '';
+                                    h4_examples.textContent = '[exampls]:';
+                                    
+                                    const div_examples = document.createElement('div');
+                                    div_examples.classList = 'example';
+                                    div_examples.textContent = data.example;
+                                    
+                                    const div_permalink = document.createElement('div');
+                                    div_permalink.classList = 'permalinkContainer';
+    
+                                    const h4_permalink = document.createElement('h4');
+                                    h4_permalink.classList = '';
+                                    h4_permalink.textContent = '[Permalink]: Find out more about this term.'
+                                    
+                                    const anchor = document.createElement('a');
+                                    anchor.classList = 'permalink';
+                                    anchor.setAttribute('href', data.permalink);
+                                    anchor.setAttribute('target', '_blank');
+                                    anchor.textContent = data.permalink;
+    
+                                    div_permalink.appendChild(h4_permalink);
+                                    div_permalink.appendChild(anchor);
+                                    
+                                    const targetElement = document.querySelector('.targetEl');
+                                    targetElement.textContent = targetContent;
+    
+                                    dataEl.appendChild(h3)
+                                    dataEl.appendChild(h4_definition)
+                                    dataEl.appendChild(p_definition)
+                                    dataEl.appendChild(h4_examples)
+                                    dataEl.appendChild(div_examples)
+                                    dataEl.appendChild(div_permalink)
+    
+                                    definitions.appendChild(dataEl);
+                                }
+                                
+                                addData(data);
+                            })
+                    })
+                })
             })
-        });
+
         search_words.value = ''
     })
 // ================= THE END: SEARCH BTN EVENT LISTENER ==================
