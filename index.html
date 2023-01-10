@@ -12,16 +12,18 @@
     <div class="wrapper">
         <div class="header">
             <div>
-                <h1>Paragraph Analytics</h1>
-                <div class="socials">
-                    <a href="https://github.com/PeaLanie" target="_blank" title="https://github.com/PeaLanie"><i class="fa-brands fa-github"></i></a>
-                    <a href="mailto:pealanie.sodium@gmail.com" title="pealanie.sodium@gmail.com"><i class="fa-solid fa-envelope"></i></a>
-                    <i class="fa-solid fa-phone" title="+27 78 311 3027"></i>
+                <div class="heading-socials">
+                    <h1>Paragraph Analytics</h1>
+                    <div class="socials">
+                        <a href="https://github.com/PeaLanie" target="_blank" title="https://github.com/PeaLanie"><i class="fa-brands fa-github"></i></a>
+                        <a href="mailto:pealanie.sodium@gmail.com" title="pealanie.sodium@gmail.com"><i class="fa-solid fa-envelope"></i></a>
+                        <i class="fa-solid fa-phone" title="+27 78 311 3027"></i>
+                    </div>
                 </div>
-            </div>
-            <div class="input_area">
-                <input type="text" id="user_input" placeholder="Paste your paragraph here...">
-                <button type="submit" id="submit">Submit</button>
+                <div class="search_bar">
+                    <input type="text" id="search_words" placeholder="Search term...">
+                    <button type="submit" id="search_btn">Search</button>
+                </div>
             </div>
         </div>
         <div>
@@ -50,10 +52,10 @@
                     </div>
                 </div>
             </div>
-            <div class="search_bar">
-                <input type="text" id="search_words" placeholder="Search term...">
-                <button type="submit" id="search_btn">Search</button>
-            </div>
+        </div>
+        <div class="input_area">
+            <input type="text" id="user_input" placeholder="Paste your paragraph here...">
+            <button type="submit" id="submit">Submit</button>
         </div>
     </div>
     <div class="blur_bg">
@@ -63,6 +65,20 @@
             <button id="resultsBtn">Ok</button>
         </div>
     </div>
-<script src="main.js"></script>
+    <div class="definitionContainer" style="display:none">
+        <div>
+            <h2><span class="targetEl"></span> definitions</h2>
+            <div class="definitions"></div>
+            <div class="definitionContainerFooter">
+                <p class="sitation">All definitions are taken from 
+                    <a href="https://rapidapi.com/community/api/urban-dictionary/" target="_blank">Urban Dictionary API
+
+                    </a>
+                </p>
+                <button id="closeDefinitions">Ok</button>
+            </div>
+        </div>
+    </div>
+<script type="module" src="main.js"></script>
 </body>
 </html>
