@@ -254,28 +254,56 @@ h1 {
     justify-content: center;
 }
 .definitionContainer > div {
-    background-color: rgb(192, 192, 192);
-    width: 328px;
-    height: 90vh;
+    background-color: #e6e6e6;
+    max-height: 95vh;
+    max-width: 95%;
     border-radius: 1rem;
     padding: 1rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     gap: 1rem;
+    box-shadow: 0px 2px 4px;
 }
-.definitionContainer h2 {
+.definitionContainer .mainContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+.definitionContainer .definition-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.speaker-icon {
+    cursor: pointer;
+    padding: .5rem;
+    background: #04215c;
+    border-radius: 7px;
+    color: white;
+}
+
+.partOfSpeechDiv {
+    background: #ccc;
+    padding: .5rem;
+    border-radius: 1rem;
+    width: 30%;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+.partOfSpeechDiv h4 {
     text-align: center;
 }
-.definitionContainer h3 {
-    margin: 1rem 0;
-}
-.definitionContainer h4 {
-    margin: .5rem 0;
-}
-.definitionContainer p {
+.partOfSpeechDiv p {
     padding: .5rem;
+    background: #b3b3b3;
+    border-radius: 7px;
+    color: #000;
 }
+
 .definitionContainer button {
     padding: .5rem 2rem;
     font-weight: bolder;
@@ -287,9 +315,6 @@ h1 {
 }
 .definitionContainer button:hover {
     background-color: #0a398a;
-}
-.definitionContainer .sitation {
-    font-size: .8rem;
 }
 .definitionContainer a {
     text-decoration: none;
@@ -306,17 +331,6 @@ h1 {
     overflow-x: hidden;
     overflow-y: auto;
 }
-.variations {
-    border: 2px solid gray;
-    padding: .5rem;
-    background-color: white;
-}
-
-.permalinkContainer {
-    margin: 1rem 0;
-    font-size: .8rem;
-}
-
 .definitionContainerFooter {
     display: flex;
     justify-content: space-between;
@@ -362,20 +376,16 @@ h1 {
     background: white;
     padding: 0 1rem;
     padding-bottom: 1rem;
-    max-height: 450px;
     width: 90%;
-    overflow-x: hidden;
-    overflow-y: auto;
     border-top-left-radius: 1rem;
     border-bottom-left-radius: 1rem;
 }
 .history-box p {
     margin: 1rem 0;
-    border-left: 2px solid rgb(136, 136, 136);
+    border-left: 2px solid #afafaf;
     padding-left: .5rem;
-    max-height: 150px;
-    overflow-x: hidden;
-    overflow-y: auto;
+    max-height: 95px;
+    overflow: clip;
 }
 .history-box .itemCount {
     color: gray;
@@ -386,6 +396,8 @@ h1 {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    max-height: 350px;
+    overflow-y: auto;
 }
 .history-item {
     background: #ececec;
@@ -393,10 +405,6 @@ h1 {
     border-radius: .5rem;
 }
 .history-box .history-header {
-    position: sticky;
-    top: 0;
-    left: 0;
-    width: 100%;
     height: 50px;
     display: flex;
     justify-content: space-between;
@@ -410,15 +418,23 @@ h1 {
     padding: .5rem 1rem;
     border-radius: 7px;
     cursor: pointer;
+    transition: background 500ms ease-in-out;
+}
+.clear-history:hover, .open-history:hover {
+    background: #0a398a;
 }
 .delete-history {
     border: none;
-    background: #940227;
+    background: #570016;
     color: white;
     padding: .5rem 1rem;
     border-radius: 7px;
     cursor: pointer;
     margin-left: .5rem;
+    transition: background 500ms ease-in-out;
+}
+.delete-history:hover {
+    background: #ff0040;
 }
 
 
@@ -445,6 +461,16 @@ h1 {
 
 @media screen and (max-width: 768px) {
     .wrapper {
+        width: 100%;
+    }
+
+    .partOfSpeechDiv {
+        width: 48%;
+    }
+}
+
+@media screen and (max-width: 425px) {
+    .partOfSpeechDiv {
         width: 100%;
     }
 }

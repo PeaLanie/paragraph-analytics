@@ -1,4 +1,4 @@
-import { autocomplete, searchWordHighlighter } from "./utils/index.js"
+import { autocomplete, searchWordHighlighter, setHistory, searchTerm, getKeyByValue, addData, makeElements } from "./utils/index.js"
 import { getDefination } from "./api/index.js"
 
 
@@ -20,16 +20,18 @@ window.addEventListener('DOMContentLoaded', () => {
     const container = document.querySelector('.container')
     const definitionContainer = document.querySelector('.definitionContainer')
     const definitions = document.querySelector('.definitions');
+    const definitionHeader = document.querySelector('.definition-header');
     const welcomeMsg = document.querySelector('.welcome-message-container');
     const welcomeMsgBtn = document.querySelector('#welcome-msg-btn');
-    let sentenceWithoutPunctuations
-    let punctuation = '–⁠!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~0-9'
-    let regex = new RegExp('[' + punctuation + ']', 'g')
-    let words = []
-    let sentence
-    let wordsList
+    let sentenceWithoutPunctuations;
+    let punctuation = '–⁠!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~0-9';
+    let regex = new RegExp('[' + punctuation + ']', 'g');
+    let words = [];
+    let sentence;
+    let wordsList;
 
-    //localStorage.clear();
+    
+
 
     let testString = `Bitcoin is a digital currency which operates free of any central control or the oversight of banks or governments. Instead it relies on peer-to-peer software and cryptography.
 
@@ -66,7 +68,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
     submit.addEventListener('click', () => {
-        sentence = testString//user_input.value;
+        sentence = user_input.value;
         const first_time = localStorage.getItem("first_time");
         if (first_time) {
             welcomeMsg.style.display = 'none';
@@ -74,8 +76,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
         if (sentence != false) {
             historyBox.style.display = 'none';
-
-
 
             sentenceWithoutPunctuations = sentence.replace(regex, '')
             sentenceWithoutPunctuations = sentenceWithoutPunctuations.replace(/(\r\n|\n|\r)/gm, '')
@@ -92,25 +92,27 @@ window.addEventListener('DOMContentLoaded', () => {
                 return `<span class="modernWord">${word}</span>`
             }).join(' ');
 
-            words = []
+            words = [];
 
-            wordsList = sentenceWithoutPunctuations.split(' ')
+            wordsList = sentenceWithoutPunctuations.split(' ');
+
             wordsList.forEach(word => {
                 if (word === '') {
                     return
                 } else {
-                    words.push(word.toLowerCase())
+                    words.push(word.toLowerCase());
                 }
             })
+
             paragraph.innerHTML = modernSentence;
-            parrent.appendChild(paragraph)
-            word_count.textContent = words.length
-            char_count.textContent = sentence.replaceAll(' ', '').length
-            letter_count_el.textContent = sentenceWithoutPunctuations.replaceAll(' ', '').length
-            symbol_count_el.textContent = symbols.length
-            number_count_el.textContent = digits.length
-            user_input.value = ''
-            container.style.display = 'block'
+            parrent.appendChild(paragraph);
+            word_count.textContent = words.length;
+            char_count.textContent = sentence.replaceAll(' ', '').length;
+            letter_count_el.textContent = sentenceWithoutPunctuations.replaceAll(' ', '').length;
+            symbol_count_el.textContent = symbols.length;
+            number_count_el.textContent = digits.length;
+            user_input.value = '';
+            container.style.display = 'block';
 
             let modernWord = document.querySelectorAll('.modernWord');
             modernWord.forEach((word) => {
@@ -121,66 +123,22 @@ window.addEventListener('DOMContentLoaded', () => {
 
                     getDefination(targetContent.toLowerCase())
                         .then((data) => {
-                            const dataList = data.list
-                            dataList.forEach((data) => {
+                            
+                            makeElements(data, definitions, definitionContainer, targetContent, definitionHeader);
 
-                                const addData = async (data) => {
+                            const speakerIcon = document.querySelector('.speaker-icon');
+                            if (speakerIcon) {
+                                speakerIcon.addEventListener('click', (e) => {
+                                    
+                                    if (data[0].phonetics.length > 0) {
+                                        if (data[0].phonetics[0].audio) {
+                                            const audio = new Audio(data[0].phonetics[0].audio);
+                                        audio.play();
+                                        }
+                                    }
+                                })
+                            }
 
-                                    definitionContainer.style.display = 'flex'
-
-                                    const dataEl = document.createElement('div');
-                                    dataEl.classList = 'variations';
-
-                                    const h3 = document.createElement('h3');
-                                    h3.classList = 'word';
-                                    h3.textContent = '[Variation]: ' + data.word;
-
-                                    const h4_definition = document.createElement('h4');
-                                    h4_definition.textContent = '[Definition]:';
-
-                                    const p_definition = document.createElement('p');
-                                    p_definition.classList = 'definition';
-                                    p_definition.textContent = data.definition;
-
-                                    const h4_examples = document.createElement('h4');
-                                    h4_examples.classList = '';
-                                    h4_examples.textContent = '[exampls]:';
-
-                                    const div_examples = document.createElement('div');
-                                    div_examples.classList = 'example';
-                                    div_examples.textContent = data.example;
-
-                                    const div_permalink = document.createElement('div');
-                                    div_permalink.classList = 'permalinkContainer';
-
-                                    const h4_permalink = document.createElement('h4');
-                                    h4_permalink.classList = '';
-                                    h4_permalink.textContent = '[Permalink]: Find out more about this term.'
-
-                                    const anchor = document.createElement('a');
-                                    anchor.classList = 'permalink';
-                                    anchor.setAttribute('href', data.permalink);
-                                    anchor.setAttribute('target', '_blank');
-                                    anchor.textContent = data.permalink;
-
-                                    div_permalink.appendChild(h4_permalink);
-                                    div_permalink.appendChild(anchor);
-
-                                    const targetElement = document.querySelector('.targetEl');
-                                    targetElement.textContent = targetContent;
-
-                                    dataEl.appendChild(h3)
-                                    dataEl.appendChild(h4_definition)
-                                    dataEl.appendChild(p_definition)
-                                    dataEl.appendChild(h4_examples)
-                                    dataEl.appendChild(div_examples)
-                                    dataEl.appendChild(div_permalink)
-
-                                    definitions.appendChild(dataEl);
-                                }
-
-                                addData(data);
-                            })
                     })
                 })
             })
@@ -203,10 +161,7 @@ window.addEventListener('DOMContentLoaded', () => {
             const timestamp = new Date();
             const date = `${timestamp.getDate()}-${timestamp.getMonth()+1}-${timestamp.getFullYear()}`;
             const time = `${timestamp.getHours()}:${timestamp.getMinutes()}:${timestamp.getSeconds()}`;
-            const dateString = `${timestamp.getDate()}${timestamp.getMonth()+1}${timestamp.getFullYear()}_${timestamp.getHours()}${timestamp.getMinutes()}${timestamp.getSeconds()}`;
-
-
-
+            
             const historyObj = new History(
                 date,
                 time,
@@ -223,84 +178,47 @@ window.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem(`${historyObj.tracker}_history`, JSON.stringify(historyObj));
 
         } else {
-            resultsPoint.textContent = 'Type or paste a paragraph to work with.'
-            blur_bg.style.visibility = 'visible'
-            resultsBox.classList.add('resultsBoxVisible')
-            searchBar.style.display = 'none'
-            container.style.display = 'none'
+            resultsPoint.textContent = 'Type or paste a paragraph to work with.';
+            blur_bg.style.visibility = 'visible';
+            resultsBox.classList.add('resultsBoxVisible');
+            container.style.display = 'none';
         }
-        words.sort()
+        words.sort();
         autocomplete(search_words, words.filter((item, index) => words.indexOf(item) === index));
     })
 
     // ============= THE ABOUT PARAGRAPH BOTTON FUNCTION ==============
+
     aboutParagraph.addEventListener('click', () => {
 
-        function filterPopularWord(term, arr1) {
-            if (term.length < 5) {
-                arr1 = []
-                delete sameWordsCount[term]
-
-                let indexOfPopularTerm = eachWord.indexOf(term)
-                eachWord.splice(indexOfPopularTerm, 1)
-                eachWord.forEach((key) => {
-                    let countOfEachKey = sameWordsCount[key]
-                    arr1.push(countOfEachKey)
-                })
-                let max = Math.max.apply(null, arr1)
-
-                term = getKeyByValue(sameWordsCount, max)
-                return filterPopularWord(term)
-            } else {
-                return term
-            }
-        }
-
-        let sameWords = []
-        let sortedWords = words.sort()
-        for (let i = 0; i < sortedWords.length; i++) {
-            let prevWord = sortedWords[i-1]
-            let eachWord = sortedWords[i]
-            let nextWord = sortedWords[i+1]
-            if (eachWord === nextWord) {
-                sameWords.push(eachWord)
-            } else if (prevWord === eachWord) {
-                sameWords.push(eachWord)
-            }
-        }
-
+        const duplicates = words.filter((word, i, arr) => word.length > 4)
+        .filter((word, i, arr) => word === arr[i-1] || word === arr[i+1]);
+        
         const sameWordsCount = {};
 
-        for (const num of sameWords) {
-        sameWordsCount[num] = sameWordsCount[num] ? sameWordsCount[num] + 1 : 1;
+        for (const word of duplicates) {
+        sameWordsCount[word] = sameWordsCount[word] ? sameWordsCount[word] + 1 : 1;
         }
-
-        const eachWord = Object.keys(sameWordsCount)
-
-        function getKeyByValue(object, value) {
-            return Object.keys(object).find(key => object[key] === value);
-          }
-        let occurrenceList = []
-        eachWord.forEach((key) => {
-            let countOfEachKey = sameWordsCount[key]
-            occurrenceList.push(countOfEachKey)
-        })
 
         if (words.length <= 100) {
             resultsPoint.textContent = `The paragraph is too short for the algorithm.`
             blur_bg.style.visibility = 'visible'
             resultsBox.classList.add('resultsBoxVisible')
         } else {
-            if (sameWords.length === 0) {
+            if (duplicates.length === 0) {
                 resultsPoint.textContent = `The algorithm is not too sure what the paragraph is about.`
                 blur_bg.style.visibility = 'visible'
                 resultsBox.classList.add('resultsBoxVisible')
             } else {
-                let max = Math.max.apply(null, occurrenceList)
+                let occurrenceList = Object.values(sameWordsCount);
+                let max = Math.max(...occurrenceList)
                 let popularTerm = getKeyByValue(sameWordsCount, max)
-                let results = filterPopularWord(popularTerm, occurrenceList);
 
-                resultsPoint.innerHTML = `The writer talks alot about <strong style='font-size: .8rem; font-weight: bold'>"${results.toUpperCase()}"</strong>. So, this paragraph may be about <strong style='font-size: .8rem; font-weight: bold'>"${results.toUpperCase()}"</strong> or is related to <strong style='font-size: .8rem; font-weight: bold'>"${results.toUpperCase()}"</strong>`
+                resultsPoint.innerHTML = `The writer talks alot about <strong style='font-size: .8rem;
+                font-weight: bold'>"${popularTerm.toUpperCase()}"</strong>. So, this paragraph may be 
+                about <strong style='font-size: .8rem; font-weight: bold'>"${popularTerm.toUpperCase()}"
+                </strong> or is related to <strong style='font-size: .8rem; font-weight: bold'>"${popularTerm.toUpperCase()}"</strong>`;
+
                 blur_bg.style.visibility = 'visible'
                 resultsBox.classList.add('resultsBoxVisible')
             }
@@ -314,42 +232,49 @@ window.addEventListener('DOMContentLoaded', () => {
     const resultsBox = document.querySelector('.resultsBox')
     const blur_bg = document.querySelector('.blur_bg')
 // ====================== SEARCH BTN EVENT LISTENER ======================
+
+    const searchTermsObj = localStorage.getItem('searchTermsObj');
+    if (!searchTermsObj) {
+        let searchTermsArray = [];
+        let searchTermsObj = {};
+        localStorage.setItem('searchTermsArray', JSON.stringify(searchTermsArray));
+        localStorage.setItem('searchTermsObj', JSON.stringify(searchTermsObj));
+    }
+
     search_btn.addEventListener('click', () => {
         let search_term = search_words.value.toLowerCase().trim()
-        let word_count = 0
-        function searchTerm(term) {
-            if (words.includes(term)) {
-                words.forEach(word => {
-                    if (word === term) {
-                        word_count++
-                    }
-                })
-                if (word_count === 1) {
-                    return  '<strong style="font-weight: bold; font-size: .8rem">' + term.toUpperCase() + '</strong>' + ' is mentioned once'
-                } else {
-                    return  '<strong style="font-weight: bold; font-size: .8rem">' + term.toUpperCase() + '</strong>' + ' is mentioned ' + '<strong>' + word_count + '</strong>' + ' times.'
-                }
-            } else {
-                return term.toUpperCase() + ' does not exist'
+        
+        const wordsObj = {};
+
+        for (const word of words) {
+            wordsObj[word] = wordsObj[word] ? wordsObj[word] + 1 : 1;
             }
+
+        if (search_term) {
+            let searchTermsArray = JSON.parse(localStorage.getItem('searchTermsArray'));
+            let searchTermsObj = JSON.parse(localStorage.getItem('searchTermsObj'));
+
+            searchTermsArray.push(search_term);
+            for (const word of searchTermsArray) {
+                searchTermsObj[word] = searchTermsObj[word] ? searchTermsObj[word] + 1 : 1;
+            }
+            localStorage.setItem('searchTermsArray', JSON.stringify(searchTermsArray));
+            
+            const filteredArray = searchTermsArray.filter((word, i, arr) => arr.indexOf(word) === i)
+        
+            const listOfObjectValues = Object.values(searchTermsObj);
+            let max = Math.max(...listOfObjectValues);
+            const mostSearchedTerm = getKeyByValue(searchTermsObj, max);
         }
-
-
-        let searchWordCount = searchTerm(search_term)
-
 
 // ================ RESULTS BOX POPUP CONDITION ==================
 
-        if (searchWordCount == `${search_term} does not exist` && search_term !== '') {
-            resultsPoint.textContent = 'Invalid or ' + '"' + search_term.toUpperCase() + '"' + ' is not available.'
-            blur_bg.style.visibility = 'visible'
-            resultsBox.classList.add('resultsBoxVisible')
-        } else if (search_term === '') {
+        if (search_term === '') {
             resultsPoint.textContent = 'Please input search term'
             blur_bg.style.visibility = 'visible'
             resultsBox.classList.add('resultsBoxVisible')
         } else {
-            resultsPoint.innerHTML = searchWordCount
+            resultsPoint.innerHTML = searchTerm(words, wordsObj, search_term)
             blur_bg.style.visibility = 'visible'
             resultsBox.classList.add('resultsBoxVisible')
         }
@@ -369,63 +294,8 @@ window.addEventListener('DOMContentLoaded', () => {
                         .then((data) => {
                             const dataList = data.list
                             dataList.forEach((data) => {
-
-                                const addData = async (data) => {
-
-                                    definitionContainer.style.display = 'flex'
-
-                                    const dataEl = document.createElement('div');
-                                    dataEl.classList = 'variations';
-
-                                    const h3 = document.createElement('h3');
-                                    h3.classList = 'word';
-                                    h3.textContent = '[Variation]: ' + data.word;
-
-                                    const h4_definition = document.createElement('h4');
-                                    h4_definition.textContent = '[Definition]:';
-
-                                    const p_definition = document.createElement('p');
-                                    p_definition.classList = 'definition';
-                                    p_definition.textContent = data.definition;
-
-                                    const h4_examples = document.createElement('h4');
-                                    h4_examples.classList = '';
-                                    h4_examples.textContent = '[exampls]:';
-
-                                    const div_examples = document.createElement('div');
-                                    div_examples.classList = 'example';
-                                    div_examples.textContent = data.example;
-
-                                    const div_permalink = document.createElement('div');
-                                    div_permalink.classList = 'permalinkContainer';
-
-                                    const h4_permalink = document.createElement('h4');
-                                    h4_permalink.classList = '';
-                                    h4_permalink.textContent = '[Permalink]: Find out more about this term.'
-
-                                    const anchor = document.createElement('a');
-                                    anchor.classList = 'permalink';
-                                    anchor.setAttribute('href', data.permalink);
-                                    anchor.setAttribute('target', '_blank');
-                                    anchor.textContent = data.permalink;
-
-                                    div_permalink.appendChild(h4_permalink);
-                                    div_permalink.appendChild(anchor);
-
-                                    const targetElement = document.querySelector('.targetEl');
-                                    targetElement.textContent = targetContent;
-
-                                    dataEl.appendChild(h3)
-                                    dataEl.appendChild(h4_definition)
-                                    dataEl.appendChild(p_definition)
-                                    dataEl.appendChild(h4_examples)
-                                    dataEl.appendChild(div_examples)
-                                    dataEl.appendChild(div_permalink)
-
-                                    definitions.appendChild(dataEl);
-                                }
-
-                                addData(data);
+                                //console.log(data)
+                                //addData(data, definitions, definitionContainer, targetContent);
                             })
                     })
                 })
@@ -443,15 +313,22 @@ window.addEventListener('DOMContentLoaded', () => {
     const closeDefinitions = document.querySelector('#closeDefinitions');
     closeDefinitions.addEventListener('click', () => {
         definitionContainer.style.display = 'none';
-        const dataEl = document.querySelectorAll('.variations');
-        dataEl.forEach((el) => {
-            el.remove()
+        const el = document.querySelectorAll('.child');
+        el.forEach((el) => {
+            el.remove();
         })
+
+        const playAudio = document.querySelector('.play-audio');
+        if (playAudio) {
+            playAudio.remove();
+        }
+
     })
 
     const firstTime = localStorage.getItem("first_time");
     const historyBox = document.querySelector('.history-box');
     let historyObjects = [];
+
     if(!firstTime) {
 
     // first time loaded!
@@ -461,8 +338,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const date = new Date();
 
     const currentDate = `${date.getDate()}-${date.getMonth()+1}-${date.getFullYear()}`;
-            const currentTime = `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
-
+    const currentTime = `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
 
     const newComer = {
         date: `${currentDate}`,
@@ -476,91 +352,56 @@ window.addEventListener('DOMContentLoaded', () => {
 
         let storageList = Object.keys(localStorage);
         storageList.forEach(key => {
-            let history = JSON.parse(localStorage.getItem(key));
-            historyObjects.push(history);
+            if (key.includes('history')) {
+                let history = JSON.parse(localStorage.getItem(key));
+                historyObjects.push(history);
+            }
         })
         historyObjects.sort((a, b) => b.tracker - a.tracker);
-
     }
 
     welcomeMsgBtn.addEventListener('click', () => {
         welcomeMsg.style.display = 'none';
     })
 
-    function setHistory(arr, parent, historyCount) {
-        historyCount.textContent = arr.length-1;
-
-        arr?.map((item) => {
-            const historyItem = document.createElement('div');
-            historyItem.className = 'history-item';
-            historyItem.setAttribute('id', item.tracker)
-
-            const dateTime = document.createElement('h5');
-            dateTime.textContent = `[${item.date}][${item.time}]`;
-
-            const p = document.createElement('p');
-            p.textContent = item.paragraph;
-
-            const openBtn = document.createElement('button');
-            openBtn.textContent = 'Open';
-            openBtn.className = 'open-history';
-
-            const deleteBtn = document.createElement('button');
-            deleteBtn.textContent = 'Delete';
-            deleteBtn.className = 'delete-history';
-
-            historyItem.appendChild(dateTime);
-            historyItem.appendChild(p);
-            historyItem.appendChild(openBtn);
-            historyItem.appendChild(deleteBtn);
-
-            parent.appendChild(historyItem);
-        })
-    }
-
-
     const historyList = document.querySelector('.history-list');
     const numberOfHistory = document.querySelector('.number-of-history');
     setHistory(historyObjects, historyList, numberOfHistory);
-
-
 
     const clearHistory = document.querySelector('.clear-history');
     const openHistory = document.querySelectorAll('.open-history');
     const deleteHistory = document.querySelectorAll('.delete-history');
     const list = Object.keys(localStorage);
 
-
-
     clearHistory.addEventListener('click', (e) => {
-        numberOfHistory.textContent = '0';
-        list.forEach((key) => {
+        list.forEach((key, i, arr) => {
             if (key.includes('history')) {
                 localStorage.removeItem(key);
             }
         })
+
         const historyItems = document.querySelectorAll('.history-item');
-        historyItems.forEach((item, i, arr) => {
-            const lastItem = arr.length - 1;
-            if (i !== lastItem) {
-                item.remove();
-            }
+        historyItems.forEach((item) => {
+            item.remove();
         })
+        historyObjects = [];
+        historyObjects.length <= 1 ? numberOfHistory.textContent = `${historyObjects.length} Item` : numberOfHistory.textContent = `${historyObjects.length} Items`;
+        clearHistory.style.background = 'gray';
     })
+
+    if (historyObjects.length === 0) {
+        clearHistory.style.background = 'gray';
+    }
 
     const displayItems = document.querySelector('.displays');
 
     openHistory.forEach((button, i, arr) => {
-        if (i === arr.length - 1) {
-            button.remove();
-        }
+        
         button.addEventListener('click', (e) => {
             const selected = e.target.parentNode;
-            //submit.click();
-            console.log(historyObjects);
+            
             historyObjects.forEach((obj, i, arr) => {
                 if (selected.id === `${obj.tracker}`) {
-                    console.log(obj);
 
                     const p = document.createElement('span');
                     p.textContent = `Created on [${obj.date}][${obj.time}]`;
@@ -583,14 +424,10 @@ window.addEventListener('DOMContentLoaded', () => {
         })
     })
 
-
     deleteHistory.forEach((button, i, arr) => {
-        if (i === arr.length - 1) {
-            button.remove();
-        }
+       
         button.addEventListener('click', (e) => {
             const selected = e.target.parentNode;
-            
             historyObjects.forEach((obj, i, arr) => {
                 if (selected.id === `${obj.tracker}`) {
                     localStorage.removeItem(`${obj.tracker}_history`);
@@ -599,7 +436,10 @@ window.addEventListener('DOMContentLoaded', () => {
             })
             
             selected.remove();
-            numberOfHistory.textContent = historyObjects.length - 1;
+            historyObjects.length <= 1 ? numberOfHistory.textContent = `${historyObjects.length} Item` : numberOfHistory.textContent = `${historyObjects.length} Items`;
+            if (historyObjects.length === 0) {
+                clearHistory.style.background = 'gray';
+            }
         })
     })
 
