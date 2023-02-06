@@ -112,7 +112,9 @@ function searchWordHighlighter(string, target) {
             }
             return `<span class="modernWord">${word}</span>`
         } else {
+          if (word != '') {
             return `<span class="modernWord">${word}</span>`
+          }
         }
     }).join(' ')
 }
@@ -135,9 +137,10 @@ function setHistory(arr, parent, historyCount) {
 
       const containingDiv = document.createElement('div');
       containingDiv.style.display = 'flex';
-      containingDiv.style.padding = '.5rem';
+      containingDiv.style.padding = '.3rem';
       containingDiv.style.flexWrap = 'wrap';
-      containingDiv.style.color = 'gray';
+      containingDiv.style.color = 'black';
+      containingDiv.style.fontSize = '.5rem'
       containingDiv.style.borderTop = '1px solid #afafaf';
       containingDiv.style.borderBottom = '1px solid #afafaf';
       containingDiv.style.marginBottom = '.5rem';
@@ -200,180 +203,127 @@ function getKeyByValue(object, value) {
   return Object.keys(object).find(key => object[key] === value);
 }
 
-const addData = async (data, parentEl, container, targetContent) => {
-
-  container.style.display = 'flex'
-
-  const dataEl = document.createElement('div');
-  dataEl.classList = 'variations';
-
-  const h3 = document.createElement('h3');
-  h3.classList = 'word';
-  h3.textContent = '[Variation]: ' + data.word;
-
-  const h4_definition = document.createElement('h4');
-  h4_definition.textContent = '[Definition]:';
-
-  const p_definition = document.createElement('p');
-  p_definition.classList = 'definition';
-  p_definition.textContent = data.definition;
-
-  const h4_examples = document.createElement('h4');
-  h4_examples.classList = '';
-  h4_examples.textContent = '[exampls]:';
-
-  const div_examples = document.createElement('div');
-  div_examples.classList = 'example';
-  div_examples.textContent = data.example;
-
-  const div_permalink = document.createElement('div');
-  div_permalink.classList = 'permalinkContainer';
-
-  const h4_permalink = document.createElement('h4');
-  h4_permalink.classList = '';
-  h4_permalink.textContent = '[Permalink]: Find out more about this term.'
-
-  const anchor = document.createElement('a');
-  anchor.classList = 'permalink';
-  anchor.setAttribute('href', data.permalink);
-  anchor.setAttribute('target', '_blank');
-  anchor.textContent = data.permalink;
-
-  div_permalink.appendChild(h4_permalink);
-  div_permalink.appendChild(anchor);
-
-  const targetElement = document.querySelector('.targetEl');
-  targetElement.textContent = targetContent;
-
-  dataEl.appendChild(h3)
-  dataEl.appendChild(h4_definition)
-  dataEl.appendChild(p_definition)
-  dataEl.appendChild(h4_examples)
-  dataEl.appendChild(div_examples)
-  dataEl.appendChild(div_permalink)
-
-  parentEl.appendChild(dataEl);
-}
-
 const makeElements = (data, parentContainer, container, clickedWord, header) => {
   container.style.display = 'flex';
   const targetElement = document.querySelector('.targetEl');
   targetElement.textContent = clickedWord;
-  if (data.title) {
-      
-      const el = document.createElement('div');
-      el.className = 'noDefinitionFoundContainer child';
-      
-
-      const h4 = document.createElement('h4');
-      h4.textContent = data.title;
-      const p2 = document.createElement('p');
-      p2.textContent = data.message;
-      const p3 = document.createElement('p');
-      p3.textContent = data.resolution;
-
-      el.appendChild(h4);
-      el.appendChild(p2);
-      el.appendChild(p3);
-
-      parentContainer.appendChild(el);
-  } else {
-    const definitionsObj = data[0];
-    const meanings = definitionsObj.meanings;
-    const phonetics = definitionsObj.phonetics[0];
-    
-    if (definitionsObj.phonetics.length > 0) {
-      const icon_text = document.createElement('div');
-      icon_text.style.display = 'flex';
-      icon_text.style.alignItems = 'center';
-      icon_text.style.gap = '0.5em';
-      icon_text.className = 'play-audio'
-
-      const speakerIconDiv = document.createElement('div');
-      speakerIconDiv.className = 'speaker-icon';
-
-      const pronaunciationText = phonetics.text;
-      
-      if (phonetics.text) {
-        const proText = document.createElement('span');
-        proText.textContent = pronaunciationText;
-        icon_text.appendChild(proText);
-      }
-      if (phonetics.audio) {
-        const icon = document.createElement('i');
-        icon.className = 'fa-solid fa-volume-high';
-        icon.style.fontSize = '.8rem'
-        speakerIconDiv.appendChild(icon);
-        icon_text.appendChild(speakerIconDiv);
-      }
-      
-      header.appendChild(icon_text);
-    }
-
-      const mainContainer = document.createElement('div');
-      mainContainer.className = 'mainContainer child';
-
-      const sitationDiv = document.createElement('div');
-      sitationDiv.className = 'sitationDiv child';
-
-      const licenseEl = document.createElement('div');
-      licenseEl.innerHTML = `License: <a href=${definitionsObj.license.url} target='_blank'>${
-        definitionsObj.license.name
-      }</a>`;
-
-      const sourceUrlsEl = document.createElement('div');
-      sourceUrlsEl.innerHTML = `Sources:${
-        definitionsObj.sourceUrls.map((source) => {
-          return ` <a href=${source} target='_blank'>${source}</a>`;
-        })
-      }`;
-
-      sitationDiv.appendChild(licenseEl);
-      sitationDiv.appendChild(sourceUrlsEl);
-      
-      meanings?.map((part) => {
-        const partOfSpeechDiv = document.createElement('div');
-        partOfSpeechDiv.className = 'partOfSpeechDiv'
-        const partOfSpeechHeader = document.createElement('h4');
-        partOfSpeechHeader.textContent = `[${part.partOfSpeech}]`;
+  if (data !== undefined) {
+    if (data.title) {
         
-        partOfSpeechDiv.appendChild(partOfSpeechHeader);
-        mainContainer.appendChild(partOfSpeechDiv);
-
-        const definitions = part.definitions;
+        const el = document.createElement('div');
+        el.className = 'noDefinitionFoundContainer child';
         
-        definitions?.map((def, i) => {
+  
+        const h4 = document.createElement('h4');
+        h4.textContent = data.title;
+        const p2 = document.createElement('p');
+        p2.textContent = data.message;
+        const p3 = document.createElement('p');
+        p3.textContent = data.resolution;
+  
+        el.appendChild(h4);
+        el.appendChild(p2);
+        el.appendChild(p3);
+  
+        parentContainer.appendChild(el);
+    } else {
+      const definitionsObj = data[0];
+      const meanings = definitionsObj.meanings;
+      const phonetics = definitionsObj.phonetics[0];
+      
+      if (definitionsObj.phonetics.length > 0) {
+        const icon_text = document.createElement('div');
+        icon_text.style.display = 'flex';
+        icon_text.style.alignItems = 'center';
+        icon_text.style.gap = '0.5em';
+        icon_text.className = 'play-audio'
+  
+        const speakerIconDiv = document.createElement('div');
+        speakerIconDiv.className = 'speaker-icon';
+  
+        const pronaunciationText = phonetics.text;
+        
+        if (phonetics.text) {
+          const proText = document.createElement('span');
+          proText.textContent = pronaunciationText;
+          icon_text.appendChild(proText);
+        }
+        if (phonetics.audio) {
+          const icon = document.createElement('i');
+          icon.className = 'fa-solid fa-volume-high';
+          icon.style.fontSize = '.8rem'
+          speakerIconDiv.appendChild(icon);
+          icon_text.appendChild(speakerIconDiv);
+        }
+        
+        header.appendChild(icon_text);
+      }
+  
+        const mainContainer = document.createElement('div');
+        mainContainer.className = 'mainContainer child';
+  
+        const sitationDiv = document.createElement('div');
+        sitationDiv.className = 'sitationDiv child';
+  
+        const licenseEl = document.createElement('div');
+        licenseEl.innerHTML = `License: <a href=${definitionsObj.license.url} target='_blank'>${
+          definitionsObj.license.name
+        }</a>`;
+  
+        const sourceUrlsEl = document.createElement('div');
+        sourceUrlsEl.innerHTML = `Sources:${
+          definitionsObj.sourceUrls.map((source) => {
+            return ` <a href=${source} target='_blank'>${source}</a>`;
+          })
+        }`;
+  
+        sitationDiv.appendChild(licenseEl);
+        sitationDiv.appendChild(sourceUrlsEl);
+        
+        meanings?.map((part) => {
+          const partOfSpeechDiv = document.createElement('div');
+          partOfSpeechDiv.className = 'partOfSpeechDiv'
+          const partOfSpeechHeader = document.createElement('h4');
+          partOfSpeechHeader.textContent = `[${part.partOfSpeech}]`;
           
-          const definitionsDiv = document.createElement('div');
-          definitionsDiv.className = 'each-definition';
-          partOfSpeechDiv.appendChild(definitionsDiv);
-          const h5_def = document.createElement('h5');
-          h5_def.textContent = `${i+1}. ${def.definition}`;
-          definitionsDiv.appendChild(h5_def);
-          if (def.example) {
-            const example = document.createElement('p');
-            example.textContent = `Example: ${def.example}`;
-            definitionsDiv.appendChild(example);
-          }
-          if (def.antonyms.length > 0) {
-            const antonyms = document.createElement('h5');
-            antonyms.textContent = `Antonyms: [${def.antonyms.join(', ')}]`;
-            definitionsDiv.appendChild(antonyms);
-          }
-          if (def.synonyms.length > 0) {
-            const synonyms = document.createElement('h5');
-            synonyms.textContent = `Synonyms: [${def.synonyms.join(', ')}]`;
-            definitionsDiv.appendChild(synonyms);
-          }
+          partOfSpeechDiv.appendChild(partOfSpeechHeader);
+          mainContainer.appendChild(partOfSpeechDiv);
+  
+          const definitions = part.definitions;
+          
+          definitions?.map((def, i) => {
+            
+            const definitionsDiv = document.createElement('div');
+            definitionsDiv.className = 'each-definition';
+            partOfSpeechDiv.appendChild(definitionsDiv);
+            const h5_def = document.createElement('h5');
+            h5_def.textContent = `${i+1}. ${def.definition}`;
+            definitionsDiv.appendChild(h5_def);
+            if (def.example) {
+              const example = document.createElement('p');
+              example.textContent = `Example: ${def.example}`;
+              definitionsDiv.appendChild(example);
+            }
+            if (def.antonyms.length > 0) {
+              const antonyms = document.createElement('h5');
+              antonyms.textContent = `Antonyms: [${def.antonyms.join(', ')}]`;
+              definitionsDiv.appendChild(antonyms);
+            }
+            if (def.synonyms.length > 0) {
+              const synonyms = document.createElement('h5');
+              synonyms.textContent = `Synonyms: [${def.synonyms.join(', ')}]`;
+              definitionsDiv.appendChild(synonyms);
+            }
+          })
+          
         })
         
-      })
-      
-      //mainContainer.appendChild(sitationDiv);
-      parentContainer.appendChild(mainContainer); 
-      parentContainer.appendChild(sitationDiv); 
+        //mainContainer.appendChild(sitationDiv);
+        parentContainer.appendChild(mainContainer); 
+        parentContainer.appendChild(sitationDiv); 
+    }
   }
 }
 
 
-  export { autocomplete, searchWordHighlighter, setHistory, searchTerm, getKeyByValue, addData, makeElements };
+  export { autocomplete, searchWordHighlighter, setHistory, searchTerm, getKeyByValue, makeElements };

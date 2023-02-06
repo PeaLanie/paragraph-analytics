@@ -239,7 +239,7 @@ h1 {
 
 .modernWord:hover {
     cursor: pointer;
-    font-weight: bold;
+    text-decoration: underline;
 }
 
 
@@ -318,7 +318,7 @@ h1 {
 }
 .definitionContainer a {
     text-decoration: none;
-    color: red;
+    color: #ff5964ff;
     transition: color 500ms ease-in-out;
 }
 .definitionContainer a:hover {
@@ -371,8 +371,6 @@ h1 {
 
 
 .history-box {
-    position: absolute;
-    transform: translate(-50%, -50%);
     background: white;
     padding: 0 1rem;
     padding-bottom: 1rem;

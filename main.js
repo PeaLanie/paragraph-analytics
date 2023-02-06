@@ -1,4 +1,4 @@
-import { autocomplete, searchWordHighlighter, setHistory, searchTerm, getKeyByValue, addData, makeElements } from "./utils/index.js"
+import { autocomplete, searchWordHighlighter, setHistory, searchTerm, getKeyByValue, makeElements } from "./utils/index.js"
 import { getDefination } from "./api/index.js"
 
 
@@ -118,10 +118,10 @@ window.addEventListener('DOMContentLoaded', () => {
             modernWord.forEach((word) => {
                 word.addEventListener('click', (e) => {
                     const targetEl = e.target;
-                    let targetContent = targetEl.textContent;
+                    let targetContent = targetEl.textContent.toLowerCase();
                     targetContent = targetContent.replace(/\W/g, '')
 
-                    getDefination(targetContent.toLowerCase())
+                    getDefination(targetContent, definitions)
                         .then((data) => {
                             
                             makeElements(data, definitions, definitionContainer, targetContent, definitionHeader);
@@ -282,21 +282,32 @@ window.addEventListener('DOMContentLoaded', () => {
 // ================= THE END: RESULTS BOX POPUP CONDITION =================
 
         paragraph.innerHTML = searchWordHighlighter(sentence, search_term);
-
+    
         let modernWord = document.querySelectorAll('.modernWord');
             modernWord.forEach((word) => {
                 word.addEventListener('click', (e) => {
                     const targetEl = e.target;
-                    let targetContent = targetEl.textContent;
+                    let targetContent = targetEl.textContent.toLowerCase();
                     targetContent = targetContent.replace(/\W/g, '')
 
-                    getDefination(targetContent.toLowerCase())
+                    getDefination(targetContent, definitions)
                         .then((data) => {
-                            const dataList = data.list
-                            dataList.forEach((data) => {
-                                //console.log(data)
-                                //addData(data, definitions, definitionContainer, targetContent);
+                            
+                        makeElements(data, definitions, definitionContainer, targetContent, definitionHeader);
+
+                        const speakerIcon = document.querySelector('.speaker-icon');
+                        if (speakerIcon) {
+                            speakerIcon.addEventListener('click', (e) => {
+                                
+                                if (data[0].phonetics.length > 0) {
+                                    if (data[0].phonetics[0].audio) {
+                                        const audio = new Audio(data[0].phonetics[0].audio);
+                                    audio.play();
+                                    }
+                                }
                             })
+                        }
+
                     })
                 })
             })
@@ -322,6 +333,9 @@ window.addEventListener('DOMContentLoaded', () => {
         if (playAudio) {
             playAudio.remove();
         }
+
+        const error = document.querySelector('.error');
+        error.remove();
 
     })
 
@@ -410,6 +424,7 @@ window.addEventListener('DOMContentLoaded', () => {
                     displayItems.appendChild(p);
                     
                     paragraph.innerHTML = obj.modern;
+                    
                     parrent.appendChild(paragraph);
                     word_count.textContent = obj.word_count;
                     char_count.textContent = obj.char_count;
@@ -418,10 +433,52 @@ window.addEventListener('DOMContentLoaded', () => {
                     number_count_el.textContent = obj.number_count;
                     container.style.display = 'block';
                     historyBox.style.display = 'none';
+
+                    sentence = paragraph.textContent;
+                    //console.log(historyParagraph)
                 }
             })
 
+            let modernWord = document.querySelectorAll('.modernWord');
+            modernWord.forEach((word) => {
+                word.addEventListener('click', (e) => {
+                    const targetEl = e.target;
+                    let targetContent = targetEl.textContent.toLowerCase();
+                    targetContent = targetContent.replace(/\W/g, '')
+
+                    getDefination(targetContent, definitions)
+                        .then((data) => {
+                            
+                        makeElements(data, definitions, definitionContainer, targetContent, definitionHeader);
+
+                        const speakerIcon = document.querySelector('.speaker-icon');
+                        if (speakerIcon) {
+                            speakerIcon.addEventListener('click', (e) => {
+                                
+                                if (data[0].phonetics.length > 0) {
+                                    if (data[0].phonetics[0].audio) {
+                                        const audio = new Audio(data[0].phonetics[0].audio);
+                                        audio.play();
+                                    }
+                                }
+                            })
+                        }
+
+                    })
+                })
+            })
+
+            
+            words = paragraph.textContent.toLowerCase()
+            .replace(/(\r\n|\n|\r)/gm, '')
+            .replace(regex, '')
+            .split(' ')
+            .filter(item => item !== '')
+
+            words.sort();
+            autocomplete(search_words, words.filter((item, index) => words.indexOf(item) === index));
         })
+
     })
 
     deleteHistory.forEach((button, i, arr) => {
