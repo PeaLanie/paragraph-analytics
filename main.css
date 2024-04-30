@@ -158,6 +158,10 @@ h1 {
     width: 100%;
     display: none;
 }
+.containerHeader {
+    display: flex;
+    justify-content: center;
+}
 .displays {
     display: flex;
     flex-wrap: wrap;
@@ -175,15 +179,17 @@ h1 {
     width: 116px;
 }
 #paragraph {
-    font-family: 'Poppins', sans-serif;
-    padding: .3rem;
-    max-height: calc(100vh - 300px);
+    font-family: 'Poppins', sans -serif;
+    padding: 1rem;
+    max-height: calc(100vh - 270px);
     overflow-x: hidden;
     overflow-y: auto;
     background: rgba(255, 255, 255, 0.4);
     line-height: 2rem;
-    border-radius: 5px;
+    border-bottom-left-radius: 7px;
+    border-bottom-right-radius: 7px;
     margin-bottom: .5rem;
+    text-align: justify;
 }
 .resultsBox {
     position: absolute;
@@ -269,7 +275,6 @@ h1 {
     display: flex;
     flex-wrap: wrap;
     gap: 1rem;
-    justify-content: space-between;
     align-items: flex-start;
 }
 .definitionContainer .definition-header {
@@ -384,6 +389,7 @@ h1 {
     padding-left: .5rem;
     max-height: 95px;
     overflow: clip;
+    text-align: justify;
 }
 .history-box .itemCount {
     color: gray;
@@ -418,8 +424,11 @@ h1 {
     cursor: pointer;
     transition: background 500ms ease-in-out;
 }
-.clear-history:hover, .open-history:hover {
+.open-history:hover {
     background: #0a398a;
+}
+.clear-history:hover {
+    background: #ff0040;
 }
 .delete-history {
     border: none;

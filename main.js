@@ -23,6 +23,8 @@ window.addEventListener('DOMContentLoaded', () => {
     const definitionHeader = document.querySelector('.definition-header');
     const welcomeMsg = document.querySelector('.welcome-message-container');
     const welcomeMsgBtn = document.querySelector('#welcome-msg-btn');
+    const inputArea = document.querySelector('.input_area');
+    const containerHeader = document.querySelector('.containerHeader');
     let sentenceWithoutPunctuations;
     let punctuation = '–⁠!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~0-9';
     let regex = new RegExp('[' + punctuation + ']', 'g');
@@ -68,7 +70,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
     submit.addEventListener('click', () => {
-        sentence = user_input.value;
+        sentence = testString//user_input.value;
         const first_time = localStorage.getItem("first_time");
         if (first_time) {
             welcomeMsg.style.display = 'none';
@@ -144,10 +146,13 @@ window.addEventListener('DOMContentLoaded', () => {
             })
 
             class History {
-                constructor(date, time, paragraph, modern, word_count, char_count, letter_count, symbol_count, number_count, tracker) {
-                    this.date = date;
-                    this.time = time
+                constructor(created_date, created_time, last_opened_date, last_opened_time, paragraph, listOfWords, modern, word_count, char_count, letter_count, symbol_count, number_count, tracker) {
+                    this.created_date = created_date;
+                    this.created_time = created_time;
+                    this.last_opened_date = last_opened_date;
+                    this.last_opened_time = last_opened_time;
                     this.paragraph = paragraph;
+                    this.listOfWords = listOfWords;
                     this.modern = modern;
                     this.word_count = word_count;
                     this.char_count = char_count;
@@ -161,11 +166,15 @@ window.addEventListener('DOMContentLoaded', () => {
             const timestamp = new Date();
             const date = `${timestamp.getDate()}-${timestamp.getMonth()+1}-${timestamp.getFullYear()}`;
             const time = `${timestamp.getHours()}:${timestamp.getMinutes()}:${timestamp.getSeconds()}`;
+            words.sort();
             
             const historyObj = new History(
                 date,
                 time,
+                date,
+                time,
                 sentence,
+                words,
                 modernSentence,
                 words.length,
                 sentence.replaceAll(' ', '').length,
@@ -176,6 +185,29 @@ window.addEventListener('DOMContentLoaded', () => {
             );
 
             localStorage.setItem(`${historyObj.tracker}_history`, JSON.stringify(historyObj));
+            inputArea.style.display = "none";
+
+            const duplicates = words.filter((word, i, arr) => word.length > 4)
+            .filter((word, i, arr) => word === arr[i-1] || word === arr[i+1]);
+            
+            const sameWordsCount = {};
+
+            for (const word of duplicates) {
+            sameWordsCount[word] = sameWordsCount[word] ? sameWordsCount[word] + 1 : 1;
+            }
+
+            let occurrenceList = Object.values(sameWordsCount);
+            let max = Math.max(...occurrenceList)
+            let popularTerm = getKeyByValue(sameWordsCount, max)
+
+            const p = document.createElement('span');
+            p.textContent = popularTerm.toUpperCase();
+            p.style.color = 'green';
+            p.style.backgroundColor = 'white';
+            p.style.padding = '0.5rem';
+            p.style.borderTopLeftRadius = '7px';
+            p.style.borderTopRightRadius = '7px';
+            containerHeader.appendChild(p);
 
         } else {
             resultsPoint.textContent = 'Type or paste a paragraph to work with.';
@@ -183,8 +215,8 @@ window.addEventListener('DOMContentLoaded', () => {
             resultsBox.classList.add('resultsBoxVisible');
             container.style.display = 'none';
         }
-        words.sort();
         autocomplete(search_words, words.filter((item, index) => words.indexOf(item) === index));
+
     })
 
     // ============= THE ABOUT PARAGRAPH BOTTON FUNCTION ==============
@@ -233,10 +265,10 @@ window.addEventListener('DOMContentLoaded', () => {
     const blur_bg = document.querySelector('.blur_bg')
 // ====================== SEARCH BTN EVENT LISTENER ======================
 
-    const searchTermsObj = localStorage.getItem('searchTermsObj');
+    let searchTermsObj = localStorage.getItem('searchTermsObj');
+    let searchTermsArray = [];
     if (!searchTermsObj) {
-        let searchTermsArray = [];
-        let searchTermsObj = {};
+        searchTermsObj = {};
         localStorage.setItem('searchTermsArray', JSON.stringify(searchTermsArray));
         localStorage.setItem('searchTermsObj', JSON.stringify(searchTermsObj));
     }
@@ -249,37 +281,34 @@ window.addEventListener('DOMContentLoaded', () => {
         for (const word of words) {
             wordsObj[word] = wordsObj[word] ? wordsObj[word] + 1 : 1;
             }
-
+            
         if (search_term) {
-            let searchTermsArray = JSON.parse(localStorage.getItem('searchTermsArray'));
-            let searchTermsObj = JSON.parse(localStorage.getItem('searchTermsObj'));
+            searchTermsArray = JSON.parse(localStorage.getItem('searchTermsArray'));
+            searchTermsObj = {};
 
             searchTermsArray.push(search_term);
             for (const word of searchTermsArray) {
                 searchTermsObj[word] = searchTermsObj[word] ? searchTermsObj[word] + 1 : 1;
             }
             localStorage.setItem('searchTermsArray', JSON.stringify(searchTermsArray));
-            
-            const filteredArray = searchTermsArray.filter((word, i, arr) => arr.indexOf(word) === i)
+            localStorage.setItem('searchTermsObj', JSON.stringify(searchTermsObj));
         
             const listOfObjectValues = Object.values(searchTermsObj);
             let max = Math.max(...listOfObjectValues);
             const mostSearchedTerm = getKeyByValue(searchTermsObj, max);
-        }
 
-// ================ RESULTS BOX POPUP CONDITION ==================
-
-        if (search_term === '') {
-            resultsPoint.textContent = 'Please input search term'
-            blur_bg.style.visibility = 'visible'
-            resultsBox.classList.add('resultsBoxVisible')
-        } else {
+            // ================ RESULTS BOX POPUP CONDITION ==================
             resultsPoint.innerHTML = searchTerm(words, wordsObj, search_term)
             blur_bg.style.visibility = 'visible'
             resultsBox.classList.add('resultsBoxVisible')
+            // ================= THE END: RESULTS BOX POPUP CONDITION =================
+        } else {
+            resultsPoint.textContent = 'Please input search term'
+            blur_bg.style.visibility = 'visible'
+            resultsBox.classList.add('resultsBoxVisible')
         }
 
-// ================= THE END: RESULTS BOX POPUP CONDITION =================
+
 
         paragraph.innerHTML = searchWordHighlighter(sentence, search_term);
     
@@ -344,7 +373,7 @@ window.addEventListener('DOMContentLoaded', () => {
     let historyObjects = [];
 
     if(!firstTime) {
-
+        
     // first time loaded!
 
     welcomeMsg.style.display = 'flex';
@@ -401,10 +430,12 @@ window.addEventListener('DOMContentLoaded', () => {
         historyObjects = [];
         historyObjects.length <= 1 ? numberOfHistory.textContent = `${historyObjects.length} Item` : numberOfHistory.textContent = `${historyObjects.length} Items`;
         clearHistory.style.background = 'gray';
+        clearHistory.style.cursor = 'default';
     })
 
     if (historyObjects.length === 0) {
         clearHistory.style.background = 'gray';
+        clearHistory.style.cursor = 'default';
     }
 
     const displayItems = document.querySelector('.displays');
@@ -417,11 +448,40 @@ window.addEventListener('DOMContentLoaded', () => {
             historyObjects.forEach((obj, i, arr) => {
                 if (selected.id === `${obj.tracker}`) {
 
+                    const timestamp = new Date();
+                    const date = `${timestamp.getDate()}-${timestamp.getMonth()+1}-${timestamp.getFullYear()}`;
+                    const time = `${timestamp.getHours()}:${timestamp.getMinutes()}:${timestamp.getSeconds()}`;
+                    
+                    const object = JSON.parse(localStorage.getItem(`${selected.id}_history`));
+                    object.last_opened_date = date;
+                    object.last_opened_time = time;
+                    //object.tracker = timestamp.getTime();
+
+                    localStorage.setItem(`${selected.id}_history`, JSON.stringify(object));
+                    let listOfWords = object.listOfWords;
+
+                    const duplicates = listOfWords.filter((word, i, arr) => word.length > 4)
+                    .filter((word, i, arr) => word === arr[i-1] || word === arr[i+1]);
+                    
+                    const sameWordsCount = {};
+
+                    for (const word of duplicates) {
+                    sameWordsCount[word] = sameWordsCount[word] ? sameWordsCount[word] + 1 : 1;
+                    }
+
+                    let occurrenceList = Object.values(sameWordsCount);
+                    let max = Math.max(...occurrenceList)
+                    let popularTerm = getKeyByValue(sameWordsCount, max)
+
                     const p = document.createElement('span');
-                    p.textContent = `Created on [${obj.date}][${obj.time}]`;
+                    p.textContent = `${popularTerm.toUpperCase()}: Created on [${obj.created_date}][${obj.created_time}]`;
                     p.style.color = 'green';
-                    p.style.fontWeight = 'bold';
-                    displayItems.appendChild(p);
+                    p.style.textAlign = 'center';
+                    p.style.backgroundColor = 'white';
+                    p.style.padding = '0.5rem';
+                    p.style.borderTopLeftRadius = '7px';
+                    p.style.borderTopRightRadius = '7px';
+                    containerHeader.appendChild(p);
                     
                     paragraph.innerHTML = obj.modern;
                     
@@ -435,7 +495,7 @@ window.addEventListener('DOMContentLoaded', () => {
                     historyBox.style.display = 'none';
 
                     sentence = paragraph.textContent;
-                    //console.log(historyParagraph)
+                    
                 }
             })
 
@@ -477,6 +537,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
             words.sort();
             autocomplete(search_words, words.filter((item, index) => words.indexOf(item) === index));
+            inputArea.style.display = "none";
         })
 
     })
@@ -496,6 +557,7 @@ window.addEventListener('DOMContentLoaded', () => {
             historyObjects.length <= 1 ? numberOfHistory.textContent = `${historyObjects.length} Item` : numberOfHistory.textContent = `${historyObjects.length} Items`;
             if (historyObjects.length === 0) {
                 clearHistory.style.background = 'gray';
+                clearHistory.style.cursor = 'default';
             }
         })
     })

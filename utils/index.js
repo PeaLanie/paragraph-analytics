@@ -96,21 +96,25 @@ function autocomplete(inp, arr) {
   }
 
 function searchWordHighlighter(string, target) {
+  let wordCount = 0
     string = string.replace(/(\r\n|\n|\r)/gm, '')
-    return string.split(' ').map((word) => {
-        if (word.toLowerCase() === target) {
-          word = `<span class="modernWord" style="color: blue; text-decoration: underline; font-size: .8rem">${target.toUpperCase()}</span>`
+    return string.split(' ').map((word, index) => {
+      if (word.toLowerCase() === target) {
+          wordCount++
+          word = `[${wordCount}] <span class="modernWord" style="color: blue; text-decoration: underline">${target}</span>`
           return word
         } else if (word.toLowerCase().includes(target)) {
-            let firstChars = word.substring(0, word.toLowerCase().indexOf(target))
-            let lastChars = word.substring(target.length + firstChars.length)
-            let regExStart = /^[^a-z]/i
-            let regExEnd = /[^a-z]$/i
-            if (regExEnd.test(firstChars) || regExStart.test(lastChars)) {
-                let newWord = `<span class="modernWord" style="color: blue; text-decoration: underline; font-size: .8rem">${target.toUpperCase()}</span>`
-                return firstChars + newWord + lastChars
-            }
+          let firstChars = word.substring(0, word.toLowerCase().indexOf(target))
+          let lastChars = word.substring(target.length + firstChars.length)
+          let regExStart = /^[^a-z]/i
+          let regExEnd = /[^a-z]$/i
+          if (regExEnd.test(firstChars) || regExStart.test(lastChars)) {
+              wordCount++
+              let newWord = `[${wordCount}] <span class="modernWord" style="color: blue; text-decoration: underline">${target}</span>`
+              return firstChars + newWord + lastChars
+          } else {
             return `<span class="modernWord">${word}</span>`
+          }
         } else {
           if (word != '') {
             return `<span class="modernWord">${word}</span>`
@@ -128,8 +132,19 @@ function setHistory(arr, parent, historyCount) {
       historyItem.className = 'history-item';
       historyItem.setAttribute('id', item.tracker)
 
+      const timesContainer = document.createElement('div');
+      timesContainer.style.display = 'flex';
+      timesContainer.style.justifyContent = 'space-between';
+      timesContainer.style.flexWrap = 'wrap';
+
+      const lastOpened = document.createElement('h5');
+      lastOpened.textContent = `last opened: [${item.last_opened_date}][${item.last_opened_time}]`;
+
       const dateTime = document.createElement('h5');
-      dateTime.textContent = `[${item.date}][${item.time}]`;
+      dateTime.textContent = `created: [${item.created_date}][${item.created_time}]`;
+
+      timesContainer.appendChild(lastOpened);
+      timesContainer.appendChild(dateTime);
 
       const p = document.createElement('p');
       p.textContent = item.paragraph;
@@ -175,7 +190,7 @@ function setHistory(arr, parent, historyCount) {
       deleteBtn.textContent = 'Delete';
       deleteBtn.className = 'delete-history';
 
-      historyItem.appendChild(dateTime);
+      historyItem.appendChild(timesContainer);
       historyItem.appendChild(p);
       historyItem.appendChild(containingDiv);
       historyItem.appendChild(openBtn);
