@@ -5,7 +5,8 @@ import {
   searchTerm,
   getKeyByValue,
   makeElements,
-  showAnalysis
+  showAnalysis,
+  addAnimation
 } from "./utils/index.js";
 import { getDefination } from "./api/index.js";
 
@@ -40,7 +41,7 @@ window.addEventListener("DOMContentLoaded", () => {
       popular_and_listObj = showAnalysis(sentence, container);
       user_input.value = "";
       
-      container.style.display = "block";
+      container.style.display = "flex";
 
       modernWord = document.querySelectorAll(".modernWord");
       modernWord.forEach((word) => {
@@ -99,8 +100,11 @@ window.addEventListener("DOMContentLoaded", () => {
         JSON.stringify(objlist)
       );
 
+      const scroller = document.querySelector(".scroller")
+      addAnimation();
+
       inputArea.style.display = "none";
-      searchBar.style.display = "inline-block";
+      searchBar.style.display = "flex";
     } else {
       resultsPoint.textContent = "Type or paste a paragraph to work with.";
       blur_bg.style.visibility = "visible";
@@ -132,7 +136,7 @@ window.addEventListener("DOMContentLoaded", () => {
     for (const word of popular_and_listObj.list) {
       wordsObj[word] = wordsObj[word] ? wordsObj[word] + 1 : 1;
     }
-    console.log(wordsObj)
+    
     if (search_term) {
       searchTermsArray = JSON.parse(localStorage.getItem("searchTermsArray"));
       searchTermsObj = {};
@@ -160,7 +164,7 @@ window.addEventListener("DOMContentLoaded", () => {
       blur_bg.style.visibility = "visible";
       resultsBox.classList.add("resultsBoxVisible");
     }
-
+    console.log(sentence)
     paragraph.innerHTML = searchWordHighlighter(sentence, search_term);
 
     let modernWord = document.querySelectorAll(".modernWord");
@@ -217,7 +221,8 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     const error = document.querySelector(".error");
-    error.remove();
+    if (error) { error.remove() };
+    
   });
 
   const firstTime = localStorage.getItem("first_time");
@@ -290,8 +295,8 @@ window.addEventListener("DOMContentLoaded", () => {
       const selected = e.target.parentNode;
       
       paragraph_analytics_history.forEach((obj) => {
-        sentence = obj.sentence;
         if (selected.id === `${obj.tracker}`) {
+          sentence = obj.sentence;
           popular_and_listObj = showAnalysis(sentence, container)
           const timestamp = new Date();
           const date = `${timestamp.getDate()}-${
@@ -302,7 +307,7 @@ window.addEventListener("DOMContentLoaded", () => {
           obj.opened_date = date;
           obj.opened_time = time;
           
-          container.style.display = "block";
+          container.style.display = "flex";
           historyBox.style.display = "none";
 
           localStorage.setItem("paragraph_analytics_history", JSON.stringify(paragraph_analytics_history))
@@ -340,8 +345,11 @@ window.addEventListener("DOMContentLoaded", () => {
         });
       });
 
+      const scroller = document.querySelector(".scroller")
+      addAnimation();
+
       inputArea.style.display = "none";
-      searchBar.style.display = "inline-block"
+      searchBar.style.display = "flex"
     });
   });
 

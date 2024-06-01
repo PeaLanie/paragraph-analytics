@@ -62,22 +62,27 @@ h1 {
 
 .input_area {
     display: flex;
+    justify-content: center;
+    align-items: end;
     gap: .5rem;
     width: 100%;
 }
 
 #submit, #user_input {
     border: none;
-    border-radius: 1.3rem;
-   
 }
 #user_input {
-    width: 70%;
-    padding: .8rem;
+    width: 80%;
+    height: 130px;
+    padding: .4rem;
+}
+textarea {
+    resize: none;
 }
 
 #submit {
-    width: 30%;
+    width: 20%;
+    padding: 1rem 0;
     text-transform: uppercase;
     font-weight: 800;
     cursor: pointer;
@@ -131,13 +136,11 @@ h1 {
 
 #search_btn, #search_words {
     border: none;
-    padding: .5rem 1rem;
-    border-radius: 1rem;
+    padding: .4rem 1rem;
 }
 
 #search_btn {
     text-transform: uppercase;
-    font-weight: 800;
     cursor: pointer;
     color: #04215c;
     transition: background 500ms ease-in-out, color 500ms ease-in-out;
@@ -152,8 +155,10 @@ h1 {
 }
 
 .container {
+    flex-direction: column;
+    align-items: center;
     border-radius: 5px;
-    padding: .5rem;
+    padding: 0 .5rem;
     box-shadow: 1px 1px 5px;
     width: 100%;
     display: none;
@@ -166,34 +171,44 @@ h1 {
     color: white;
     letter-spacing: 6px;
 }
-.displays {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    width: 100%;
-    background-color: rgb(212, 212, 212);
-    padding: .3rem;
-    font-size: .7rem;
-    color: rgb(39, 39, 39);
-    border-radius: 5px;
-    box-shadow: 0 -1px 4px;
+.scroller {
+    max-width: 100%;
+    overflow: hidden;
+    -webkit-mask: linear-gradient(90deg, transparent, #13438c 20%, #0b3171 80%, transparent);
+    mask: linear-gradient(90deg, transparent, #13438c 20%, #0b3171 80%, transparent);
 }
-.displays p {
-    padding: .5rem .3rem;
-    width: 116px;
+.displays {
+    padding-block: 0.5rem;
+    display: flex;
+    gap: 1rem;
+    width: max-content;
+    color: white;
+    animation: scroll 20s linear infinite;
+}
+.displays li {
+    list-style-type: none;
+    padding: .5rem;
+    background-color: #13438c;
+    box-shadow: 0px 3px 4px #00000080;
     text-align: center;
+    text-wrap: nowrap;
+    border-radius: 7px;
+}
+@keyframes scroll {
+    to {
+        transform: translate(calc(-50% - 0.5rem))
+    }
 }
 #paragraph {
     font-family: 'Poppins', sans -serif;
     padding: 1rem;
-    max-height: calc(100vh - 210px);
+    max-height: calc(100vh - 190px);
     overflow-x: hidden;
     overflow-y: auto;
     background: rgba(255, 255, 255, 0.4);
     line-height: 2rem;
     border-bottom-left-radius: 7px;
     border-bottom-right-radius: 7px;
-    margin-bottom: .5rem;
     text-align: justify;
 }
 .resultsBox {
@@ -234,27 +249,11 @@ h1 {
     cursor: pointer;
     transition: background 300ms ease-in-out;
 }
-#aboutParagraph {
-    padding: .5rem 1rem;
-    background: #04215c;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 300ms ease-in-out;
-}
-#aboutParagraph:hover {
-    background: #0a398a;
-}
-
 
 .modernWord:hover {
     cursor: pointer;
     text-decoration: underline;
 }
-
-
-
 
 
 .definitionContainer {
@@ -385,18 +384,17 @@ h1 {
     padding: 0 1rem;
     padding-bottom: 1rem;
     width: 70%;
-    border-top-left-radius: 1rem;
-    border-bottom-left-radius: 1rem;
 }
 .history-box p {
-    margin: 1rem 0;
-    border-left: 2px solid gray;
+    margin-bottom: 0.5rem;
     padding: .5rem;
-    max-height: 120px;
+    max-height: 100px;
     overflow: clip;
     text-align: justify;
     color: #b6b6b6;
-    line-height: 28px;
+    line-height: 24px;
+    -webkit-mask: linear-gradient(black 50%, transparent);
+    mask: linear-gradient(black 50%, transparent);
 }
 .history-box .itemCount {
     font-weight: bold;
@@ -406,7 +404,7 @@ h1 {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    max-height: 450px;
+    max-height: 370px;
     overflow-y: auto;
 }
 .history-item {
@@ -495,6 +493,7 @@ h1 {
     .history-box {
         width: 100%;
     }
+    
 }
 
 @media screen and (max-width: 430px) {
@@ -506,5 +505,22 @@ h1 {
 @media screen and (max-width: 390px) {
     .heading-socials h1 {
         font-size: 1.2rem;
+    }
+}
+
+@media screen and (max-width: 320px) {
+    .heading-socials h1 {
+        font-size: 1rem;
+    }
+    .history-list {
+        max-height: 200px;
+    }
+    #user_input {
+        height: 100px;
+    }
+    #submit {
+        padding: .5rem;
+        font-size: .5rem;
+        font-weight: normal;
     }
 }

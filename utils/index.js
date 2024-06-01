@@ -352,22 +352,27 @@ function showAnalysis(text, el) {
 
   paragraphContainer.appendChild(paragraph);
 
-  let displaysContainer = document.createElement("div");
+  let outer_sroller = document.createElement("div");
+  outer_sroller.className = "scroller";
+
+  let displaysContainer = document.createElement("ul");
   displaysContainer.className = "displays";
 
-  let words = document.createElement("p");
+  outer_sroller.appendChild(displaysContainer);
+
+  let words = document.createElement("li");
   words.textContent = `Words: ${wordList.length}`;
 
-  let characters = document.createElement("p");
+  let characters = document.createElement("li");
   characters.textContent = `Characters: ${chars.length}`;
 
-  let letters_el = document.createElement("p");
+  let letters_el = document.createElement("li");
   letters_el.textContent = `Letters: ${letters.length}`;
 
-  let symbols_el = document.createElement("p");
+  let symbols_el = document.createElement("li");
   symbols_el.textContent = `Symbols: ${symbols.length}`;
 
-  let digits_el = document.createElement("p");
+  let digits_el = document.createElement("li");
   digits_el.textContent = `Numbers: ${digits.length}`;
 
   displaysContainer.appendChild(words);
@@ -378,7 +383,7 @@ function showAnalysis(text, el) {
 
   el.appendChild(header);
   el.appendChild(paragraphContainer);
-  el.appendChild(displaysContainer);
+  el.appendChild(outer_sroller);
 
   return { popular: getPopularTerm(wordList), list: wordList };
 }
@@ -402,6 +407,17 @@ function getPopularTerm(list) {
   return getKeyByValue(sameWordsCount, max);
 }
 
+function addAnimation() {
+  const inner_scroller = document.querySelector(".displays");
+  const scroller_content = Array.from(inner_scroller.children);
+
+  scroller_content.forEach(item => {
+    const duplicatedItem = item.cloneNode(true);
+    duplicatedItem.setAttribute("aria-hidden", true);
+    inner_scroller.appendChild(duplicatedItem);
+  })
+}
+
 export {
   autocomplete,
   searchWordHighlighter,
@@ -410,4 +426,5 @@ export {
   getKeyByValue,
   makeElements,
   showAnalysis,
+  addAnimation
 };
